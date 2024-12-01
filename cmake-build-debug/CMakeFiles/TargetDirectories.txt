@@ -1,0 +1,5 @@
+C:/Users/zuzuz/CLionProjects/advent-of-code-2024/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/zuzuz/CLionProjects/advent-of-code-2024/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/zuzuz/CLionProjects/advent-of-code-2024/cmake-build-debug/day-01/CMakeFiles/day_01.dir
+C:/Users/zuzuz/CLionProjects/advent-of-code-2024/cmake-build-debug/day-01/CMakeFiles/edit_cache.dir
+C:/Users/zuzuz/CLionProjects/advent-of-code-2024/cmake-build-debug/day-01/CMakeFiles/rebuild_cache.dir
