@@ -3,50 +3,80 @@
 #include <ostream>
 #include <regex>
 
-std::vector<std::string> instructions;
-
-void findInstructions(const std::string &inputFileName) {
-    instructions.clear();
+std::string getMemory(const std::string &inputFileName) {
+    std::string lines;
     if (std::ifstream inputFile(inputFileName); inputFile.is_open()) {
         std::string line;
-        std::regex instructionRegex(R"(mul\(\d{1,3}\,\d{1,3}\))");
-
         while (getline(inputFile, line)) {
-            auto wordsBegin = std::sregex_iterator(line.begin(), line.end(), instructionRegex);
-            auto wordsEnd = std::sregex_iterator();
+            lines += line;
+        }
+    }
+    return lines;
+}
 
-            for (std::sregex_iterator i = wordsBegin; i != wordsEnd; ++i) {
-                const std::smatch& match = *i;
-                std::string matchstr = match.str();
-                std::cout << matchstr << std::endl;
-                instructions.push_back(matchstr);
+std::vector<std::string> findInstructions(std::string memory, const std::regex &instructionRegex) {
+    std::vector<std::string> instructions;
+
+    const auto wordsBegin = std::sregex_iterator(memory.begin(), memory.end(), instructionRegex);
+    const auto wordsEnd = std::sregex_iterator();
+
+    for (std::sregex_iterator i = wordsBegin; i != wordsEnd; ++i) {
+        const std::smatch &match = *i;
+        std::string matchstr = match.str();
+        instructions.push_back(matchstr);
+    }
+    return instructions;
+}
+
+int getMultiplicationResult(std::string instruction) {
+    std::regex numberToMultiplyRegex("\\d{1,3}");
+
+    auto wordsBegin = std::sregex_iterator(instruction.begin(), instruction.end(), numberToMultiplyRegex);
+    auto wordsEnd = std::sregex_iterator();
+
+    const std::smatch match = *wordsBegin;
+    const std::smatch secondMatch = *(++wordsBegin);
+    const std::string matchstr = match.str();
+    const std::string secondmatchstr = secondMatch.str();
+
+    return stoi(secondmatchstr) * stoi(matchstr);
+}
+
+void firstTask(const std::string &inputFileName) {
+    std::regex instructionRegex(R"(mul\(\d{1,3}\,\d{1,3}\))");
+    const std::string memory = getMemory(inputFileName);
+    std::vector<std::string> instructions = findInstructions(memory, instructionRegex);
+    int sum = 0;
+    for (const auto &instruction: instructions) {
+        sum += getMultiplicationResult(instruction);
+    }
+    std::cout << sum << std::endl;
+}
+
+void secondTask(const std::string &inputFileName) {
+    std::regex instructionRegex(R"(do\(\)|don\'t\(\)|mul\(\d{1,3}\,\d{1,3}\))");
+    const std::string memory = getMemory(inputFileName);
+    std::vector<std::string> instructions = findInstructions(memory, instructionRegex);
+    int sum = 0;
+    bool flag = true;
+    for (const auto &instruction: instructions) {
+        if (instruction == "don't()") {
+            flag = false;
+        } else if (instruction == "do()") {
+            flag = true;
+        } else {
+            if (flag) {
+                sum += getMultiplicationResult(instruction);
             }
         }
     }
-}
 
-int getMultiplicationResult(const std::vector<std::string>& instructionVector) {
-    std::regex numberToMultiplyRegex("\\d{1,3}");
-    int sum = 0;
-
-    for (auto instruction: instructionVector) {
-        auto wordsBegin = std::sregex_iterator(instruction.begin(), instruction.end(), numberToMultiplyRegex);
-        auto wordsEnd = std::sregex_iterator();
-
-        std::smatch match = *wordsBegin;
-        std::smatch secondMatch = *(++wordsBegin);
-        std::string matchstr = match.str();
-        std::string secondmatchstr = secondMatch.str();
-
-        sum += stoi(secondmatchstr) * stoi(matchstr);
-    }
-
-    return sum;
+    std::cout << sum << std::endl;
 }
 
 int main() {
     std::cout << "Advent of Code 2024 - Day 03" << std::endl;
-    findInstructions("C:/Users/zuzuz/CLionProjects/advent-of-code-2024/day-03/myInput.txt");
-    std::cout << getMultiplicationResult(instructions);
+    firstTask("C:/Users/zuzuz/CLionProjects/advent-of-code-2024/day-03/myInput.txt");
+    secondTask("C:/Users/zuzuz/CLionProjects/advent-of-code-2024/day-03/myInput.txt");
     return 0;
 }
