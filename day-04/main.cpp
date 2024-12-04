@@ -18,7 +18,6 @@ Matrix getWordSearch(const std::string &inputFileName) {
                 wordSearch.push_back(firstLine);
             }
             wordSearch.push_back("..." + line + "...");
-
         }
         wordSearch.push_back(firstLine);
         wordSearch.push_back(firstLine);
@@ -98,11 +97,10 @@ bool searchLeftDown(const Matrix &wordSearch, const int rootLine, const int root
 int countOccurences(const Matrix &wordSearch) {
     int occurences = 0;
     for (int i = 3; i < wordSearch.size() - 3; i++) {
-        const std::string& line = wordSearch[i];
+        const std::string &line = wordSearch[i];
         int res = 0;
         while ((res = line.find('X', res + 1)) !=
                std::string::npos) {
-
             if (res >= 3 && res <= line.size() - 3) {
                 if (searchDown(wordSearch, i, res)) occurences++;
                 if (searchUp(wordSearch, i, res)) occurences++;
@@ -123,9 +121,63 @@ void firstTask(const std::string &inputFileName) {
     std::cout << countOccurences(wordSearch) << std::endl;
 }
 
+bool searchDownRight(const Matrix &wordSearch, const int rootLine, const int rootPosition) {
+    if (wordSearch[rootLine + 1][rootPosition - 1] == 'M' && wordSearch[rootLine - 1][rootPosition + 1] == 'S') {
+        return true;
+    }
+    return false;
+}
+
+bool searchDownLeft(const Matrix &wordSearch, const int rootLine, const int rootPosition) {
+    if (wordSearch[rootLine + 1][rootPosition + 1] == 'M' && wordSearch[rootLine - 1][rootPosition - 1] == 'S') {
+        return true;
+    }
+    return false;
+}
+
+bool searchUpLeft(const Matrix &wordSearch, const int rootLine, const int rootPosition) {
+    if (wordSearch[rootLine - 1][rootPosition + 1] == 'M' && wordSearch[rootLine + 1][rootPosition - 1] == 'S') {
+        return true;
+    }
+    return false;
+}
+
+bool searchUpRight(const Matrix &wordSearch, const int rootLine, const int rootPosition) {
+    if (wordSearch[rootLine - 1][rootPosition - 1] == 'M' && wordSearch[rootLine + 1][rootPosition + 1] == 'S') {
+        return true;
+    }
+    return false;
+}
+
+int countMASOccurences(const Matrix &wordSearch) {
+    int occurences = 0;
+    for (int i = 3; i < wordSearch.size() - 3; i++) {
+        const std::string &line = wordSearch[i];
+
+        int res = 0;
+        while ((res = line.find('A', res + 1)) !=
+               std::string::npos) {
+            if (res >= 3 && res <= line.size() - 3) {
+                if ((searchDownRight(wordSearch, i, res) && searchUpRight(wordSearch, i, res)) || (
+                        searchDownRight(wordSearch, i, res) && searchDownLeft(wordSearch, i, res)) || (
+                        searchUpLeft(wordSearch, i, res) && searchUpRight(wordSearch, i, res)) || (
+                        searchUpLeft(wordSearch, i, res) && searchDownLeft(wordSearch, i, res))) {
+                    occurences++;
+                }
+            }
+        }
+    }
+    return occurences;
+}
+
+void secondTask(const std::string &inputFileName) {
+    const Matrix wordSearch = getWordSearch(inputFileName);
+    std::cout << countMASOccurences(wordSearch) << std::endl;
+}
 
 int main() {
     std::cout << "Advent of Code 2024 - Day 04" << std::endl;
     firstTask("C:/Users/zuzuz/CLionProjects/advent-of-code-2024/day-04/myInput.txt");
+    secondTask("C:/Users/zuzuz/CLionProjects/advent-of-code-2024/day-04/myInput.txt");
     return 0;
 }
