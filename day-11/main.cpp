@@ -25,14 +25,14 @@ int countDigits(const long long n) { return floor(log10(n) + 1); }
 std::vector<long long> rearrangeStones(const std::vector<long long> &initialArrangement) {
     std::vector<long long> newArrangement;
     for (const auto i: initialArrangement) {
+        int digits = countDigits(i);
         if (i == 0) {
             newArrangement.push_back(1);
-        } else if (countDigits(i) % 2 == 0) {
+        } else if (digits % 2 == 0) {
+            int halfDigits = digits/2;
             std::string s = std::to_string(i);
-            long long firstStone = std::stoll(s.substr(0, countDigits(i) / 2));
-            long long secondStone = std::stoll(s.substr(countDigits(i) / 2, countDigits(i) / 2));
-            newArrangement.push_back(firstStone);
-            newArrangement.push_back(secondStone);
+            newArrangement.push_back(std::stoll(s.substr(0, halfDigits)));
+            newArrangement.push_back(std::stoll(s.substr(halfDigits, halfDigits)));
         } else {
             newArrangement.push_back(i * 2024);
         }
@@ -42,7 +42,8 @@ std::vector<long long> rearrangeStones(const std::vector<long long> &initialArra
 
 void firstTask(const std::string &inputFileName) {
     std::vector<long long> initialVector = getInitialArrangement(inputFileName);
-    for (int i = 0; i < 25; i++) {
+    for (int i = 0; i < 75; i++) {
+        std::cout << i << std::endl;
         initialVector = rearrangeStones(initialVector);
     }
     std::cout << initialVector.size();
